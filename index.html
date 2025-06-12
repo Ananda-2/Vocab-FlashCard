@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocab Revision</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15);
+      padding: 48px;
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-8px);
+    }
+
+    .title {
+      font-size: 2.2em;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #718096;
+      font-size: 1.1em;
+      margin-bottom: 40px;
+    }
+
+    .mode-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.95em;
+      margin-bottom: 32px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    .flashcard {
+      background: #f7fafc;
+      border: 3px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 40px 24px;
+      margin: 32px 0;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flashcard::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .flashcard:hover {
+      border-color: #cbd5e0;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .flashcard-text {
+      font-size: 1.8em;
+      font-weight: 600;
+      color: #2d3748;
+      line-height: 1.4;
+    }
+
+    .input-group {
+      margin: 32px 0;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 18px 24px;
+      font-size: 1.1em;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      background: #f7fafc;
+      transition: all 0.3s ease;
+      outline: none;
+      font-weight: 500;
+    }
+
+    input[type="text"]:focus {
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    input[type="text"]::placeholder {
+      color: #a0aec0;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 32px 0;
+    }
+
+    button {
+      padding: 16px 32px;
+      font-size: 1em;
+      font-weight: 600;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 140px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-show {
+      background: linear-gradient(135deg, #48bb78, #38a169);
+      color: white;
+      box-shadow: 0 8px 16px rgba(72, 187, 120, 0.3);
+    }
+
+    .btn-show:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(72, 187, 120, 0.4);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-next {
+      background: linear-gradient(135deg, #ed8936, #dd6b20);
+      color: white;
+      box-shadow: 0 8px 16px rgba(237, 137, 54, 0.3);
+    }
+
+    .btn-next:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(237, 137, 54, 0.4);
+    }
+
+    .result {
+      margin: 32px 0;
+      padding: 20px;
+      border-radius: 16px;
+      font-weight: 600;
+      font-size: 1.1em;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.4s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result.correct {
+      background: linear-gradient(135deg, #48bb78, #38a169);
+      color: white;
+      animation: correctPulse 0.6s ease;
+    }
+
+    .result.incorrect {
+      background: linear-gradient(135deg, #f56565, #e53e3e);
+      color: white;
+      animation: incorrectShake 0.6s ease;
+    }
+
+    .result.info {
+      background: linear-gradient(135deg, #4299e1, #3182ce);
+      color: white;
+    }
+
+    @keyframes correctPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes incorrectShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 32px 24px;
+        margin: 16px;
+      }
+
+      .title {
+        font-size: 1.8em;
+      }
+
+      .flashcard-text {
+        font-size: 1.5em;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">📚 Vocab Revision</h1>
+    <p class="subtitle">Flashcard style vocabulary practice</p>
+    
+    <div id="mode" class="mode-badge"></div>
+    
+    <div class="flashcard">
+      <div id="promptText" class="flashcard-text"></div>
+    </div>
+    
+    <div class="input-group">
+      <input type="text" id="userInput" placeholder="Type the word here..." style="display:none">
+    </div>
+    
+    <div class="button-group">
+      <button id="showBtn" class="btn-show" style="display:none">💡 Show Meaning</button>
+      <button id="submitBtn" class="btn-submit" style="display:none">✓ Submit</button>
+      <button onclick="nextWord()" class="btn-next">→ Next</button>
+    </div>
+    
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const wordList = [
+      { word: "abate", meaning: "to reduce in amount or intensity" },
+      { word: "benevolent", meaning: "kind and generous" },
+      { word: "candid", meaning: "honest and straightforward" },
+      { word: "dauntless", meaning: "showing fearlessness and determination" },
+      { word: "elated", meaning: "extremely happy or joyful" },
+      { word: "frugal", meaning: "economical, avoiding waste" },
+      { word: "gregarious", meaning: "sociable and outgoing" },
+      { word: "hypocrite", meaning: "a person who pretends to have virtues" },
+      { word: "lucid", meaning: "clear and easy to understand" },
+      { word: "mundane", meaning: "ordinary, lacking interest" }
+    ];
+
+    let current = {};
+    let isWordMode = true;
+
+    function nextWord() {
+      // Clear previous result
+      const resultEl = document.getElementById('result');
+      resultEl.className = 'result';
+      document.getElementById('userInput').value = '';
+
+      // Pick random word and mode
+      current = wordList[Math.floor(Math.random() * wordList.length)];
+      isWordMode = Math.random() < 0.5;
+
+      const modeEl = document.getElementById('mode');
+      const promptEl = document.getElementById('promptText');
+      const input = document.getElementById('userInput');
+      const showBtn = document.getElementById('showBtn');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (isWordMode) {
+        // Show word, think of meaning
+        modeEl.textContent = '🤔 Think of the meaning';
+        promptEl.textContent = current.word;
+        input.style.display = 'none';
+        showBtn.style.display = 'inline-block';
+        submitBtn.style.display = 'none';
+      } else {
+        // Show meaning, type the word
+        modeEl.textContent = '✏️ Type the word';
+        promptEl.textContent = current.meaning;
+        input.style.display = 'block';
+        showBtn.style.display = 'none';
+        submitBtn.style.display = 'inline-block';
+        setTimeout(() => input.focus(), 100);
+      }
+    }
+
+    function showResult(text, type) {
+      const resultEl = document.getElementById('result');
+      resultEl.textContent = text;
+      resultEl.className = `result ${type} show`;
+    }
+
+    // Show meaning button
+    document.getElementById('showBtn').onclick = () => {
+      showResult(current.meaning, 'info');
+    };
+
+    // Submit answer button
+    document.getElementById('submitBtn').onclick = () => {
+      const userAnswer = document.getElementById('userInput').value.trim().toLowerCase();
+      const correct = current.word.toLowerCase();
+      
+      if (userAnswer === correct) {
+        showResult('🎉 Correct!', 'correct');
+      } else {
+        showResult(`❌ Wrong! Answer: ${current.word}`, 'incorrect');
+      }
+    };
+
+    // Enter key support
+    document.getElementById('userInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('submitBtn').click();
+      }
+    });
+
+    // Start the app
+    nextWord();
+  </script>
+</body>
+</html>
